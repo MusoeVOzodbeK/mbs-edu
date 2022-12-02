@@ -50,7 +50,7 @@ import routes from "routes";
 import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
 
 // Images
-import mainLogo from "files/Group 1 (3).png";
+import mainLogo from "./files/Group 1 (3).png";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();

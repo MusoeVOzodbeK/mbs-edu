@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // @mui material components
 import Grid from "@mui/material/Grid";
 
@@ -34,10 +19,25 @@ import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
 // Dashboard components
 import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
-
+  const [staticInfor, setStaticInfor] = useState([]);
+  const mainToken = localStorage.getItem("mainToken");
+  useEffect(() => {
+    axios
+      .get("http://back.mbs-edu.uz/api/v1/dashboard/", {
+        headers: {
+          Authorization: `Bearer ${mainToken}`,
+        },
+      })
+      .then((res) => {
+        setStaticInfor(res.data.data);
+      });
+  }, []);
+  console.log(staticInfor);
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -47,13 +47,17 @@ function Dashboard() {
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="dark"
-                icon="weekend"
-                title="Bookings"
-                count={281}
+                icon="accessibilityIcon"
+                title="Active Student"
+                count={
+                  staticInfor.activeStudentCount === undefined
+                    ? "load..."
+                    : staticInfor.activeStudentCount
+                }
                 percentage={{
                   color: "success",
                   amount: "+55%",
-                  label: "than lask week",
+                  label: "than lask month",
                 }}
               />
             </MDBox>
@@ -61,9 +65,11 @@ function Dashboard() {
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
-                icon="leaderboard"
-                title="Today's Users"
-                count="2,300"
+                icon="groupsIcon"
+                title="All Boys"
+                count={
+                  staticInfor.allBoysCount === undefined ? "load..." : staticInfor.allBoysCount
+                }
                 percentage={{
                   color: "success",
                   amount: "+3%",
@@ -76,13 +82,15 @@ function Dashboard() {
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="success"
-                icon="store"
-                title="Revenue"
-                count="34k"
+                icon="groups2Icon"
+                title="All Girls"
+                count={
+                  staticInfor.allGirlsCount === undefined ? "load..." : staticInfor.allGirlsCount
+                }
                 percentage={{
                   color: "success",
                   amount: "+1%",
-                  label: "than yesterday",
+                  label: "than last month",
                 }}
               />
             </MDBox>
@@ -91,9 +99,153 @@ function Dashboard() {
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="primary"
-                icon="person_add"
-                title="Followers"
-                count="+91"
+                icon="apartmentIcon"
+                title="All Employees"
+                count={
+                  staticInfor.allEmployeesCount === undefined
+                    ? "load..."
+                    : staticInfor.allEmployeesCount
+                }
+                percentage={{
+                  color: "success",
+                  amount: "",
+                  label: "Just updated",
+                }}
+              />
+            </MDBox>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5}>
+              <ComplexStatisticsCard
+                color="warning"
+                icon="laptopMacIcon"
+                title="Groups"
+                count={
+                  staticInfor.allGroupCount === undefined ? "load..." : staticInfor.allGroupCount
+                }
+                percentage={{
+                  color: "success",
+                  amount: "",
+                  label: "Just updated",
+                }}
+              />
+            </MDBox>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5}>
+              <ComplexStatisticsCard
+                color="secondary"
+                icon="chairIcon"
+                title="Rooms"
+                count={
+                  staticInfor.allRoomsCount === undefined ? "load..." : staticInfor.allRoomsCount
+                }
+                percentage={{
+                  color: "success",
+                  amount: "",
+                  label: "Just updated",
+                }}
+              />
+            </MDBox>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5}>
+              <ComplexStatisticsCard
+                color="light"
+                icon="man2Icon"
+                title="Students"
+                count={
+                  staticInfor.allStudentCount === undefined
+                    ? "load..."
+                    : staticInfor.allStudentCount
+                }
+                percentage={{
+                  color: "success",
+                  amount: "",
+                  label: "Just updated",
+                }}
+              />
+            </MDBox>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5}>
+              <ComplexStatisticsCard
+                color="info"
+                icon="bookmarksIcon"
+                title="Teachers"
+                count={
+                  staticInfor.allTeachersCount === undefined
+                    ? "load..."
+                    : staticInfor.allTeachersCount
+                }
+                percentage={{
+                  color: "success",
+                  amount: "",
+                  label: "Just updated",
+                }}
+              />
+            </MDBox>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5}>
+              <ComplexStatisticsCard
+                color="success"
+                icon="editLocationIcon"
+                title="Courses"
+                count={staticInfor.courseCount === undefined ? "load..." : staticInfor.courseCount}
+                percentage={{
+                  color: "success",
+                  amount: "",
+                  label: "Just updated",
+                }}
+              />
+            </MDBox>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5}>
+              <ComplexStatisticsCard
+                color="error"
+                icon="paidIcon"
+                title="Debtor Students"
+                count={
+                  staticInfor.debtorStudentCount === undefined
+                    ? "load..."
+                    : staticInfor.debtorStudentCount
+                }
+                percentage={{
+                  color: "success",
+                  amount: "",
+                  label: "Just updated",
+                }}
+              />
+            </MDBox>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5}>
+              <ComplexStatisticsCard
+                color="error"
+                icon="removeCircleIcon"
+                title="No Active Students"
+                count={
+                  staticInfor.noActiveStudentCount === undefined
+                    ? "load..."
+                    : staticInfor.noActiveStudentCount
+                }
+                percentage={{
+                  color: "success",
+                  amount: "",
+                  label: "Just updated",
+                }}
+              />
+            </MDBox>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5}>
+              <ComplexStatisticsCard
+                color="primary"
+                icon="analyticsIcon"
+                title="Croups"
+                count={staticInfor.allCroupCount === null ? "load..." : staticInfor.allCroupCount}
                 percentage={{
                   color: "success",
                   amount: "",

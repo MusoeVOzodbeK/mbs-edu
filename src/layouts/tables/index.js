@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
@@ -30,11 +15,31 @@ import DataTable from "examples/Tables/DataTable";
 // Data
 import authorsTableData from "layouts/tables/data/authorsTableData";
 import projectsTableData from "layouts/tables/data/projectsTableData";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function Tables() {
   const { columns, rows } = authorsTableData();
   const { columns: pColumns, rows: pRows } = projectsTableData();
-
+  const mainToken = localStorage.getItem("mainToken");
+  const [allStudents, setAllStudents] = useState({});
+  useEffect(() => {
+    axios
+      .get("http://back.mbs-edu.uz/api/v1/student-category/getAll", {
+        headers: {
+          Authorization: `Bearer ${mainToken}`,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.length !== 0) {
+          setAllStudents(res.data);
+        } else {
+          setAllStudents("None");
+        }
+      });
+  }, []);
+  console.log(allStudents);
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -53,7 +58,7 @@ function Tables() {
                 coloredShadow="info"
               >
                 <MDTypography variant="h6" color="white">
-                  Authors Table
+                  Students Table
                 </MDTypography>
               </MDBox>
               <MDBox pt={3}>

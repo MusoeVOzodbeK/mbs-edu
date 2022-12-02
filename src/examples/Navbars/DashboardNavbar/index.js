@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useState, useEffect } from "react";
 
 // react-router components
@@ -52,6 +37,7 @@ import {
   setMiniSidenav,
   setOpenConfigurator,
 } from "context";
+import axios from "axios";
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
@@ -59,8 +45,19 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
-
+  const loginToken = localStorage.getItem("token");
+  const [role, setRole] = useState([]);
+  const [roleId, setRoleId] = useState("");
   useEffect(() => {
+    axios
+      .get("http://back.mbs-edu.uz/api/v1/filial/current-filial", {
+        headers: {
+          Authorization: `Bearer ${loginToken}`,
+        },
+      })
+      .then((res) => {
+        setRole(res.data);
+      });
     // Setting the navbar type
     if (fixedNavbar) {
       setNavbarType("sticky");
@@ -73,8 +70,8 @@ function DashboardNavbar({ absolute, light, isMini }) {
       setTransparentNavbar(dispatch, (fixedNavbar && window.scrollY === 0) || !fixedNavbar);
     }
 
-    /** 
-     The event listener that's calling the handleTransparentNavbar function when 
+    /**
+     The event listener that's calling the handleTransparentNavbar function when
      scrolling the window.
     */
     window.addEventListener("scroll", handleTransparentNavbar);
@@ -122,7 +119,36 @@ function DashboardNavbar({ absolute, light, isMini }) {
       return colorValue;
     },
   });
-
+  const handleChange = (event) => {
+    setRoleId(event.target.value);
+    if (event.target.value === "noSelected") {
+      alert("Please selected!!!");
+    } else {
+      axios
+        .get(`http://back.mbs-edu.uz/api/v1/auth/choose/${event.target.value}`, {
+          headers: {
+            Authorization: `Bearer ${loginToken}`,
+          },
+        })
+        .then((res) => {
+          localStorage.setItem("mainToken", res.data.data.access_token);
+        });
+    }
+  };
+  if (roleId.length > 0) {
+    sessionStorage.setItem("roleId", role);
+  }
+  const selectStyle = {
+    width: "10vw",
+    padding: "7px",
+    textAlign: "center",
+    border: "none",
+    borderRadius: "5px",
+  };
+  const optionStyle = {
+    padding: "5px",
+  };
+  console.log(roleId);
   return (
     <AppBar
       position={absolute ? "absolute" : navbarType}
@@ -133,6 +159,17 @@ function DashboardNavbar({ absolute, light, isMini }) {
         <MDBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
           <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
         </MDBox>
+
+        <select name="select" id="select" style={selectStyle} onChange={handleChange}>
+          <option value="noSelected" style={optionStyle}>
+            Select
+          </option>
+          {role.map((value) => (
+            <option value={value.id} style={optionStyle} key={value.id}>
+              {value.name}
+            </option>
+          ))}
+        </select>
         {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
             <MDBox pr={1}>
